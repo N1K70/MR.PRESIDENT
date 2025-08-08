@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mrpresident-postgres
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "5433:5432" # host:container. Cambia 5433 si ya está en uso
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
